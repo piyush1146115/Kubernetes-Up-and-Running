@@ -26,3 +26,15 @@ Kubernetes achieves scalability by favoring decoupled architectures.
 - **Separation of Concerns for Consistency and Scaling**: The decoupling and separation of concerns produced by the Kubernetes stack lead to significantly greater consistency for the lower levels of your infrastructure.
 
 ## Abstracting Your Infrastructure
+
+The move to application-oriented container APIs like Kubernetes has two concrete benefits. First, it separates developers from specific machines.
+Kubernetes has a number of plug-ins that can abstract you from a particular cloud.
+
+## Efficiency
+
+- Kubernetes provides tools that automate the distribution of applications across a cluster of machines, ensuring higher levels of utilization than are possible with traditional tooling.
+- A further increase in efficiency comes from the fact that a developer’s test environ‐ment can be quickly and cheaply created as a set of containers running in a personal view of a shared Kubernetes cluster (using a feature called namespaces).
+
+## Cloud Native Ecosystem
+
+Following the lead of Kubernetes (and Docker and Linux before it), most of these projects are also open source. This means that a developer beginning to build does not have to start from scratch. In the years since it was released, tools for nearly every task, from machine learning to continuous development and serverless programming models have been built for Kubernetes. Indeed, in many cases the challenge isn’t finding a potential solution, but rather deciding which of the many solutions is best suited to the task. The wealth of tools in the cloud native ecosystem has itself become a strong reason for many people to adopt Kubernetes.
