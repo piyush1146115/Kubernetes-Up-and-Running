@@ -56,3 +56,77 @@ In contrast, a private registry is best for storing applications that are privat
 #### The Container Runtime Interface
 
 Kubernetes provides an API for describing an application deployment, but relies on a container runtime to set up an application container using the container-specific APIs native to the target OS. On a Linux system that means configuring cgroups and namespaces. The interface to this container runtime is defined by the Container Runtime Interface (CRI) standard.
+
+#### Running Containers with Docker
+
+In Kubernetes, containers are usually launched by a daemon on each node called
+the kubelet; however, it’s easier to get started with containers using the Docker
+command-line tool.
+
+```bash
+$ docker run -d --name kuard \
+--publish 8080:8080 \
+gcr.io/kuar-demo/kuard-amd64:blue
+```
+
+This command starts the kuard container and maps ports 8080 on your local
+machine to 8080 in the container.
+
+### Limiting Resource Usage
+
+Docker enables applications to use fewer resources by exposing the underlying
+cgroup technology provided by the Linux kernel. These capabilities are likewise used
+by Kubernetes to limit the resources each Pod uses.
+
+#### Limiting memory resources
+
+One of the key benefits to running applications within a container is the ability to restrict resource utilization. This allows multiple applications to coexist on the same hardware and ensures fair usage.
+
+To limit kuard to 200 MB of memory and 1 GB of swap space, use the `--memory` and
+`--memory-swap` flags with the docker run command.
+
+```bash
+Stop and remove the current kuard container:
+$ docker stop kuard
+$ docker rm kuard
+
+Then start another kuard container using the appropriate flags to limit memory
+usage:
+$ docker run -d --name kuard \
+--publish 8080:8080 \
+--memory 200m \
+--memory-swap 1G \
+gcr.io/kuar-demo/kuard-amd64:blue
+```
+
+#### Limiting CPU resources
+
+Restrict CPU utilization using the `--cpu-shares` flag with the docker run command:
+
+```bash
+$ docker run -d --name kuard \
+--publish 8080:8080 \
+--memory 200m \
+--memory-swap 1G \
+--cpu-shares 1024 \
+gcr.io/kuar-demo/kuard-amd64:blue
+```
+
+### Cleanup
+
+Once you are done building an image, you can delete it with `docker rmi` command:
+```
+docker rmu <tag-name>
+or
+docker rmi <image-id>
+```
+
+Images can either be deleted via their tag name (e.g., gcr.io/kuar-demo/kuard-amd64:blue) or via their image ID. As with all ID values in the docker tool, the
+image ID can be shortened as long as it remains unique. Generally only three or four
+characters of the ID are necessary.
+
+To see the images currently on your machine, you can use the `docker images` command.
+You can then delete tags you are no longer using.
+
+Docker provides a tool called `docker system prune` for doing general cleanup. This
+will remove all stopped containers, all networks not used by at least one container, all untagged images, and all unused image layers cached as part of the build process. Use it carefully!
