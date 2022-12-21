@@ -102,3 +102,46 @@ If you want to remove a label, you can use the `<label-name>-` syntax:
 ```
 $ kubectl label pods bar color-
 ```
+
+## Debugging Commands
+
+You can use the following to see the logs for a running container:
+```
+$ kubectl logs <pod-name>
+```
+
+If you have multiple containers in your Pod, you can choose the container to view
+using the `-c` flag. By default, kubectl logs lists the current logs and exits. If you instead want to
+continuously stream the logs back to the terminal without exiting, you can add the `-f`
+(follow) command-line flag.
+
+You can also use the exec command to execute a command in a running container:
+```
+$ kubectl exec -it <pod-name> -- bash
+```
+
+You can also copy files to and from a container using the cp command:
+```
+$ kubectl cp <pod-name>:</path/to/remote/file> </path/to/local/file>
+```
+
+To forward traffic from the local machine on port 8080 to the remote container on port 80:
+```
+$ kubectl port-forward <pod-name> 8080:80
+```
+
+To see a list of the latest 10 events on all objects in a given namespace:
+```
+$ kubectl get events
+```
+You can also stream events as they happen by adding `--watch` to the kubectl get
+events command. You may also wish to include `-A` to see events in all namespaces.
+
+You can use the top command to see the list of resources in use by either nodes or Pods. This
+command:
+```
+$ kubectl top nodes
+
+$ kubectl top nodes
+```
+These top commands only work if a metrics server is running in your cluster.
