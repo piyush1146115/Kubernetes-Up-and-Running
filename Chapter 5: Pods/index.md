@@ -16,7 +16,7 @@ In general, the right question to ask yourself when designing Pods is “Will th
 
 ### The Pod Manifest
 
-Kubernetes strongly believes in declarative configuration, which means that you write down the desired state of the world in a configuration file and then submit that configuration to a service that takes actions to ensure the desired state becomes the actual state. The Kubernetes API server accepts and processes Pod manifests before storing them in persistent storage (etcd). 
+Kubernetes strongly believes in declarative configuration, which means that you write down the desired state of the world in a configuration file and then submit that configuration to a service that takes actions to ensure the desired state becomes the actual state. The Kubernetes API server accepts and processes Pod manifests before storing them in persistent storage (etcd).
 
 Scheduling multiple replicas of the same application onto the same machine is worse for reliability, since the machine is a single failure domain. Kubernetes scheduler tries to ensure that Pods from the same application are distributed onto different machines for reliability in the presence of such failures. Once scheduled to a node, Pods don’t move and must be explicitly destroyed and rescheduled.
 
@@ -48,8 +48,15 @@ spec:
 ```
 
 Use the kubectl apply command to launch a single instance of kuard:
+
 ```
 $ kubectl apply -f kuard-pod.yaml
 ```
 
 The Pod manifest will be submitted to the Kubernetes API server. The Kubernetes system will then schedule that Pod to run on a healthy node in the cluster, where the kubelet daemon will monitor it.
+
+## Listing Pods
+
+```
+kubectl get pods
+```
