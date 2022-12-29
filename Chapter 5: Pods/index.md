@@ -123,3 +123,27 @@ You can also get an interactive session by adding the
 ```
 $ kubectl exec -it kuard -- ash
 ```
+
+## Health Checks
+
+Kubernetes introduced health checks for application liveness.
+
+**Liveness Probe**: Liveness probes are defined per container, which means each container inside a Pod is health checked separately. Containers that fail liveness checks are restarted.
+
+**Readiness Probe**: Readiness describes when a container is ready to serve user requests. Containers that fail readiness checks are removed from service load balancers. Readiness probes are configured similarly to liveness probes.
+
+**Startup Probe**: When a Pod is started, the startup probe is run before any other probing of the Pod is started. The startup probe proceeds until it either times out (in which case the Pod is restarted) or it succeeds, at which time the
+liveness probe takes over.
+
+**Advanced Probe Configuration**: Probes in Kubernetes have a number of advanced options, including how long to wait
+after Pod startup to start probing, how many failures should be considered a true failure, and how many successes are necessary to reset the failure count.
+
+**Other Types of Health Checks**: In addition to HTTP checks, Kubernetes also supports tcpSocket health checks that
+open a TCP socket; if the connection succeeds, the probe succeeds. This style of probe is useful for non-HTTP applications, such as databases or other non–HTTP-
+based APIs.
+
+## Resource Management
+
+Kubernetes allows users to specify two different resource metrics. `Resource requests` specify the minimum amount of a resource required to run the application.
+`Resource limits specify the maximum amount of a resource that an application can consume.
+Let’s look at these in greater detail in the following sections.
