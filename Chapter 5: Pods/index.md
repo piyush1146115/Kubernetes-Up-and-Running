@@ -146,4 +146,33 @@ based APIs.
 
 Kubernetes allows users to specify two different resource metrics. `Resource requests` specify the minimum amount of a resource required to run the application.
 `Resource limits specify the maximum amount of a resource that an application can consume.
-Let’s look at these in greater detail in the following sections.
+
+### Resource Requests: Minimum Required Resources
+
+When a Pod requests the resources required to run its containers, Kubernetes guar‐
+antees that these resources are available to the Pod.
+
+[example of resource requests](./kuard-pod-resreq.yaml)
+
+Resources are requested per container, not per Pod. The total resources requested by the Pod is the sum of all resources requested by all containers in the Pod because the different containers often have very different CPU requirements.
+
+CPU requests are implemented using the cpu-shares functionality in the Linux kernel.
+
+If a container is over its memory request, the
+OS can’t just remove memory from the process, because it’s been allocated. Consequently, when the system runs out of memory, the kubelet terminates containers whose memory usage is greater than their requested memory. These containers are automatically
+restarted, but with less available memory on the machine for the container to consume.
+
+### Capping Resource Usage with Limits
+
+In addition to setting the resources required by a Pod, which establishes the mini‐
+mum resources available to it, you can also set a maximum on a its resource usage via
+resource limits.
+
+[example of resource limits](./kuard-pod-reslim.yaml)
+
+When you establish limits on a container, the kernel is configured to ensure that
+consumption cannot exceed these limits. A container with a CPU limit of 0.5 cores will only ever get 0.5 cores, even if the CPU is otherwise idle. A container with a memory limit of 256 MB will not be allowed additional memory; for example, malloc will fail if its memory usage exceeds 256 MB.
+
+## Persisting Data with Volumes
+
+In some use cases, having access to persistent disk storage is an important part of a healthy application. Kubernetes models such persistent storage.
