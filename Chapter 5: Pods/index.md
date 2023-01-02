@@ -176,3 +176,17 @@ consumption cannot exceed these limits. A container with a CPU limit of 0.5 core
 ## Persisting Data with Volumes
 
 In some use cases, having access to persistent disk storage is an important part of a healthy application. Kubernetes models such persistent storage.
+
+### Using Volumes with Pods
+
+To add a volume to a Pod manifest, there are two new stanzas to add to our configuration. The first is a new `spec.volumes` section. This array defines all of the volumes that may be accessed by containers in the Pod manifest. It’s important to note that not all containers are required to mount all volumes defined in the Pod. The second addition is the `volumeMounts` array in the container definition. This array defines
+the volumes that are mounted into a particular container and the path where each volume should be mounted. Note that two different containers in a Pod can mount the same volume at different mount paths.
+
+[example: pod manifest with volume](./kuard-pod-vol.yaml)
+
+### Different Ways of Using Volumes with Pods
+
+- Communication/synchronization
+- Cache
+- Persistent data
+- Mounting the host filesystem
