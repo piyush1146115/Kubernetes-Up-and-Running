@@ -77,3 +77,49 @@ Ingress supports some other fancy features. The level of support for these featu
 There are multiple Ingress controller implementations, and you may want to run multiple Ingress controllers on a single cluster. 
 
 ### Running Multiple Ingress Controllers
+
+You may want to run multiple Ingress controllers on a single cluster. To solve this case, the `IngressClass`
+resource exists so that an Ingress resource can request a particular implementation.
+
+If you specify multiple Ingress objects, the Ingress controllers should read them all and try to merge them into a coherent configuration. However, if you specify
+duplicate and conflicting configurations, the behavior is undefined.
+
+### Ingress and Namespaces
+
+First, due to an abundance of security caution, an Ingress object can refer to only an upstream service
+in the same namespace. This means that you can’t use an Ingress object to point a subpath to a service in another namespace.
+
+### Path Rewriting
+
+Some Ingress controller implementations support optionally, doing path rewriting. This can be used to modify the path in the HTTP request as it gets proxied.
+
+There are multiple implementations that not only implement path rewriting, but also support regular expressions when specifying the path. For example, the NGINX controller allows regular expressions to capture parts of the path and then use that captured content when doing rewriting.
+
+### Serving TLS
+
+When serving websites, it is becoming increasingly necessary to do so securely using TLS and HTTPS. Ingress supports this (as do most Ingress controllers).
+
+First, users need to specify a Secret with their TLS certificate and keys. Once you have the certificate uploaded, you can reference it in an Ingress object. This
+specifies a list of certificates along with the hostnames that those certificates should be used for. Again, if multiple Ingress objects specify certificates for
+the same hostname, the behavior is undefined.
+
+### Alternate Ingress Implementations
+
+There are many different implementations of Ingress controllers, each building on the base Ingress object with unique features. It is a vibrant ecosystem.
+
+First, each cloud provider has an Ingress implementation that exposes the specific cloud-based L7 load balancer for that cloud.
+
+The most popular generic Ingress controller is probably the open source NGINX Ingress controller.
+
+`Emissary` and `Gloo` are two other Envoy-based Ingress controllers that are focused on being API gateways.
+
+`Traefik` is a reverse proxy implemented in Go that also can function as an Ingress controller. It has a set of features and dashboards that are very developer-friendly.
+
+## The Future of Ingress
+
+As you have seen, the Ingress object provides a very useful abstraction for configuring L7 load balancers—but it hasn’t scaled to all the features that users want and
+various implementations are looking to offer.
+
+The future of HTTP load balancing for Kubernetes looks to be the Gateway API, which is in the midst of development by the Kubernetes special interest group (SIG)
+dedicated to networking. The Gateway API project is intended to develop a more modern API for routing in Kubernetes. Though it is more focused on HTTP balanc‐
+ing, Gateway also includes resources for controlling Layer 4 (TCP) balancing.
