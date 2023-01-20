@@ -111,9 +111,9 @@ First, each cloud provider has an Ingress implementation that exposes the specif
 
 The most popular generic Ingress controller is probably the open source NGINX Ingress controller.
 
-`Emissary` and `Gloo` are two other Envoy-based Ingress controllers that are focused on being API gateways.
+[Emissary](https://github.com/emissary-ingress/emissary) and [Gloo](https://github.com/solo-io/gloo) are two other Envoy-based Ingress controllers that are focused on being API gateways.
 
-`Traefik` is a reverse proxy implemented in Go that also can function as an Ingress controller. It has a set of features and dashboards that are very developer-friendly.
+[Traefik](https://doc.traefik.io/traefik/) is a reverse proxy implemented in Go that also can function as an Ingress controller. It has a set of features and dashboards that are very developer-friendly.
 
 ## The Future of Ingress
 
