@@ -13,9 +13,9 @@ spec:
       version: "2"
   template:
     metadata:
-    labels:
-      app: kuard
-      version: "2"
+      labels:
+        app: kuard
+        version: "2"
     spec:
       containers:
         - name: kuard
