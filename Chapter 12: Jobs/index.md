@@ -62,3 +62,11 @@ shown in [Example](./job-parallel.yaml).
 ### Work Queues
 
 A common use case for jobs is to process work from a work queue. 
+
+#### Starting a work queue
+
+We start by launching a centralized work queue service. kuard has a simple memory-based work queue system built in. We will start an instance of kuard to act as a coordinator for all the work.
+
+### CronJobs
+
+Sometimes you want to schedule a job to be run at a certain interval. To achieve this, you can declare a CronJob in Kubernetes, which is responsible for creating a new Job object at a particular interval.
