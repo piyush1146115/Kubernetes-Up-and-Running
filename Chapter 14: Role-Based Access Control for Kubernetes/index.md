@@ -132,9 +132,11 @@ Finally, in many cases, these same groups are used to manage access to other res
 groups for access control to Kubernetes dramatically simplifies management.
 
 To bind a group to a ClusterRole, use a Group kind for the subject in the binding:
+```
 ...
 subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: my-great-groups-name
 ...
+```
