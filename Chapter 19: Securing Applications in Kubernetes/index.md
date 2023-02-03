@@ -21,3 +21,27 @@ precedence.
 - allowPrivilegeEscalation: Configures whether a process in a container can gain more privileges than its parent.
 - privileged: Runs the container as privileged, which elevates the container to the same permissions as the host.
 - readOnlyRootFilesystem: Mounts the container root filesystem to read-only. This is a common attack vector and is best practice to enable.
+
+We will introduce the operating system level security controls and then how to configure them via SecurityContext. It’s important to note that many of these controls are host operating system dependent. Here are a list of the core set of operating system controls that are covered by SecurityContext:
+
+- Capabilities: Allow either the addition or removal of groups of privilege that may be required for a workload to operate.
+- AppArmor: Controls which files processes can access. AppArmor profiles can be applied to containers via the addition of an annotation of `container.apparmor.security.beta.kubernetes.io/<container_name>: <profile_ref>` to the Pod specification.
+- Seccomp: Seccomp (secure computing) profiles allow the creation of syscall filters. These filters allow specific syscalls to be allowed or blocked, which limits the surfacearea of the Linux kernel that is exposed to the processes in the Pods.
+- SELinux: Defines access controls for files and processes. SELinux operators use labels that are grouped together to create a security context (not to be mistaken with a Kubernetes SecurityContext), which is used to limit access to a process. By default, Kubernetes allocates a random SELinux context for each container; how‐ever, you may choose to set one via SecurityContext.
+
+### SecurityContext Challenges
+
+The creation and management of AppArmor, seccomp, and SELinux profiles and contexts is not easy and is error prone. The cost of an error is breaking the
+ability for an application to perform its function. There are several tools out there that create a way to generate a seccomp profile from a running Pod, which can then be applied using SecurityContext. One such project is the [Security Profiles Operator](https://github.com/kubernetes-sigs/security-profiles-operator), which makes it easy to generate and manage Seccomp profiles.
+
+## Pod Security
+
+One of the main differences between Pod Security and its predecessor is that Pod Security only performs validation and not mutation.
+
+### What Is Pod Security?
+
+Pod Security allows you to declare different security profiles for Pods. These security profiles are known as Pod Security Standards and are applied at the namespace level. Pod Security Standards are a collection of security-sensitive fields in a Pod specification (including, but not limited to, SecurityContext) and their associated values. There are three different standards that range from restricted to permissive. The idea is that you can apply a general security posture to all Pods in a given namespace. The three Pod Security Standards are as follows:
+
+- Baseline: Most common privilege escalation while enabling easier onboarding.
+- Restricted: Highly restricted, covering security best practices. May cause workloads to break.
+- Privileged: Open and unrestricted.
