@@ -45,3 +45,33 @@ Pod Security allows you to declare different security profiles for Pods. These s
 - Baseline: Most common privilege escalation while enabling easier onboarding.
 - Restricted: Highly restricted, covering security best practices. May cause workloads to break.
 - Privileged: Open and unrestricted.
+
+Each Pod Security Standard defines a list of fields in the Pod specification and their allowed values. Here are some fields that are covered by these standards:
+- spec.securityContext
+- spec.containers[*].securityContext
+- spec.containers[*].ports
+- spec.volumes[*].hostPath
+
+Each standard is applied to a namespace using a given mode. There are three modes a policy may be applied to. They are as follows:
+- Enforce: Any Pods that violate the policy will be denied
+- Warn: Any Pods that violate the policy will be allowed, and a warning message will be displayed to the user
+- Audit: Any Pods that violate the policy will generate an audit message in the audit log
+
+### Applying Pod Security Standards
+
+Pod Security Standards are applied to a namespace using labels as follows:
+- Required: pod-security.kubernetes.io/<MODE>: <LEVEL>
+- Optional: pod-security.kubernetes.io/<MODE>-version: <VERSION> (defaults to latest)
+
+The namespace in [Example](./baseline-ns.yaml) illustrates how you may use multiple modes to enforce at one standard (baseline in this example) and audit and warn at another(restricted).
+
+Pod Security is a great way to manage the security posture of your workloads byapplying policy at the namespace level and allowing Pods to be created only if
+they don’t violate the policy. It’s flexible and offers different prebuilt policies from permissive to restricted along with tooling to easily roll out policy changes without the risk of breaking workloads.
+
+### Service Account Management
+
+Service accounts are Kubernetes resources that provide an identity to workloads that run inside Pods. RBAC can be applied to service accounts to control what resources, via the Kubernetes API, the identity has access to. By default, Kubernetes creates a default service account in each namespace, which is automatically set as the serviceaccount for all Pods. This service account contains a token that is automounted in each Pod and is used to access the Kubernetes API. To disable this behavior, you must add `automountServiceAccountToken: false` to the service account configuration.
+
+This [Example](./service-account.yaml) demonstrates how this can be done for the default service account. 
+
+Service accounts are often overlooked when considering Pod security; however, they allow direct access to the Kubernetes API and, without adequate RBAC, could allow an attacker access to Kubernetes.
