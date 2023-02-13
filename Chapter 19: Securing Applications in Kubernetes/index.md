@@ -75,3 +75,31 @@ Service accounts are Kubernetes resources that provide an identity to workloads 
 This [Example](./service-account.yaml) demonstrates how this can be done for the default service account. 
 
 Service accounts are often overlooked when considering Pod security; however, they allow direct access to the Kubernetes API and, without adequate RBAC, could allow an attacker access to Kubernetes.
+
+### RuntimeClass
+
+Kubernetes interacts with the container runtime on the node’s operating system via the Container Runtime Interface (CRI). The creation and standardization of
+this interface has allowed for an ecosystem of container runtimes to exist. These container runtimes may offer different levels of isolation, which include stronger security guarantees based on how they are implemented. Projects like Kata Containers, Firecracker, and gVisor are based on different isolation mechanisms from nested virtualization to more sophisticated syscall filtering.
+
+You can use a RuntimeClass by specifying runtimeClassName in the Pod specification. [Here](./kuard-pod-runtimeclass.yaml) is an example Pod that specifies a RuntimeClass.
+
+RuntimeClass allows users to select different container runtimes that may have different security isolation. Using RuntimeClass can help complement the overall security of your workloads, especially if workloads are processing sensitive information or running untrusted code.
+
+### Network Policy
+
+Kubernetes also has a Network Policy API that allows you to create both ingress and egress network policies for your workload. Network policies are configured using labels that allow you to select specific Pods and define how they can communicate with other Pods and endpoints. Network Policy resources
+are implemented by network plug-ins, such as Calico, Cilium, and Weave Net.
+
+The Network Policy resource is namespaced and is structured with the podSelector, policyTypes, ingress, and egress sections with the only required field being pod
+Selector. If the podSelector field is empty, the policy matches all Pods in a namespace. This field may also contain a matchLabels section, which functions in the same way as a Service resource, allowing you to add a set of labels to match a specific set of Pods.
+
+If a Pod is matched by any Network Policy resource, then any ingress or egress communication must be explicitly defined, otherwise it will be blocked. If a
+Pod matches multiple Network Policy resources, then the policies are additive. If a Pod isn’t matched by any Network Policy, then traffic is allowed. This decision was intentionally made to ease onboarding of new workloads. If you do, however, want all traffic to be blocked by default, you can create a default deny rule per namespace. [Example]() 19-9 shows a default deny rule that can be applied per namespace.
+
+### Security Benchmark Tools
+
+There are several open source tools that allow you to run a suite of security benchmarks against your Kubernetes cluster to determine if your configuration meets a predefined set of security baselines. Once such tool is called [kube-bench](https://github.com/aquasecurity/kube-bench). kube-bench can be used to run the CIS Benchmarks for Kubernetes. Tools like kube-bench running the CIS Benchmarks aren’t specifically focused on Pod security; however, they can certainly expose any cluster misconfigurations and help identify remediations.
+
+### Image Security
+
+Another important part of Pod security is keeping the code and application within the Pod secure. Securing an application’s code is a complex topic beyond the scope of this chapter; however, the basics for container image security include making sure that your container image registry is doing static scanning for known code vulnerabilities.
