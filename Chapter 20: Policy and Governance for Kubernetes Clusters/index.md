@@ -25,3 +25,24 @@ before it’s saved to storage. Mutating admission controllers allow the resourc
 Here, we will focus on an open source ecosystem project called [Gatekeeper](https://open-policy-agent.github.io/gatekeeper/website/docs/). Gatekeeper is a Kubernetes-native policy controller that evaluates resources based on defined policy and determines whether to allow a Kubernetes resource to be created or modified. These evaluations happen server-side as the API request flows through the Kubernetes API server, which means each cluster has a single point of processing. Processing the policy evaluations server-side means that you can install Gatekeeper on existing Kubernetes clusters without changing developer tooling, workflows, or continuous delivery pipelines.
 
 Gatekeeper uses custom resource definitions (CRDs) to define a new set of Kubernetes resources specific to configuring it, which allows cluster administrators to use familiar tools like kubectl to operate Gatekeeper. In addition, it provides real-time, meaningful feedback to the user on why a resource was denied and how to remediate the problem. These Gatekeeper-specific custom resources can be stored in source control and managed using GitOps workflows. Gatekeeper also performs resource mutation (resource modification based on defined conditions) and auditing.
+
+### What Is Open Policy Agent?
+
+At the core of Gatekeeper is [Open Policy Agent](https://www.openpolicyagent.org/), a cloud native open source policy engine that is extensible and allows policy to be portable across different applications. Open Policy Agent (OPA) is responsible for performing all policy evaluations and returning either an admit or deny. This gives Gatekeeper access to an ecosystem of policy tooling, such as, [Conftest](https://github.com/open-policy-agent/conftest), which enables you to write policy tests and implement them in continuous integration pipelines before deployment.
+
+Open Policy Agent exclusively uses a native query language called Rego for all policies.
+
+### Installing Gatekeeper
+
+Before you start configuring policies, you’ll need to install Gatekeeper. Gatekeeper components run as Pods in the gatekeeper-system namespace and configure a
+webhook admission controller.
+
+```
+$ helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
+$ helm install gatekeeper/gatekeeper --name-template=gatekeeper \
+--namespace gatekeeper-system --create-
+```
+
+### Configuring Policies
+
+First, you’ll need to configure the policy we need to create a custom resource called a constraint template. This is usually done by a cluster administrator.
