@@ -40,9 +40,57 @@ webhook admission controller.
 ```
 $ helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
 $ helm install gatekeeper/gatekeeper --name-template=gatekeeper \
---namespace gatekeeper-system --create-
+--namespace gatekeeper-system --create-namespace
 ```
 
 ### Configuring Policies
 
-First, you’ll need to configure the policy we need to create a custom resource called a constraint template. This is usually done by a cluster administrator.
+First, you’ll need to configure the policy we need to create a custom resource called a constraint template. This is usually done by a cluster administrator. Now you can create a constraint resource to put the policy into effect (again, playing the role of the cluster administrator).
+
+### Understanding Constraint Templates
+
+This constraint template has an apiVersion and kind that are part of the custom resources used only by Gatekeeper. Under the spec section, you’ll see the name
+K8sAllowedRepos : remember that name, because you’ll use it as the constraint kind when creating constraints.
+
+### Creating Constraints
+
+Let’s take a closer look at the constraint in the [Example](./allowedrepos-constraint.yaml), which allows only container images that originate from gcr.io/kuar-demo/. You may notice that the constraint is of the kind “K8sAllowedRepos,” which was defined as part of the constraint template. It also defines an enforcementAction of “deny,” meaning that noncompliant resources will be denied. The match portion defines the scope of this constraint, all Pods in the default namespace. Finally, the parameters section is required to satisfy the constraint template (an array of strings).
+
+### Audit
+
+Gatekeeper’s audit capabilities allow cluster administrators to get a list of current, noncompliant resources on a cluster. To audit the list of noncompliant resources for a given constraint, run a kubectl get constraint on that constraint and specify that you want the output in YAML format as follows:
+
+```
+$ kubectl get constraint repo-is-kuar-demo -o yaml
+```
+
+Under the status section, you can see the auditTimestamp , which is the last time the audit was run. totalViolations lists the number of resources that violate this constraint. The violations section lists the violations. We can see that the nginx-noncompliant Pod is in violation and the message with the details why. Using a constraint enforcementAction of “dryrun” along withaudit is a powerful way to confirm that your policy is having the
+desired impact. It also creates a workflow to bring resources into compliance.
+
+### Mutation
+
+By default, Gatekeeper is only deployed as a validating admission webhook, but it can be configured to operate as a mutating admission webhook. To enable mutation, please refer to the [doc](https://open-policy-agent.github.io/gatekeeper/website/docs/mutation/). We will assume that
+Gatekeeper is configured correctly to support mutation. Example 20-6 defines a mutation assignment that matches all Pods except those in the “system” namespace,
+and assigns a value of “Always” to imagePullPolicy.
+
+Create the mutation assignment:
+```
+$ kubectl apply -f imagepullpolicyalways-mutation.yaml
+assign.mutations.gatekeeper.sh/demo-image-pull-policy created
+```
+
+Now create a Pod. This Pod doesn’t have imagePullPolicy explicitly set, so by default this field is set to “IfNotPresent.” However, we expect Gatekeeper to mutate this fieldto “Always”:
+
+```
+$ kubectl apply -f compliant-pod.yaml
+pod/kuard created
+```
+
+Validate that the imagePullPolicy has been successfully mutated to “Always” by running the following:
+```
+$ kubectl get pods kuard -o=jsonpath="{.spec.containers[0].imagePullPolicy}"
+```
+
+Mutating admission happens before validating admission, so createconstraints that validate the mutations you expect to apply to the specific resource.
+
+### Data Replication
