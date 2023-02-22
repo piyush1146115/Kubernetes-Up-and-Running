@@ -94,3 +94,9 @@ $ kubectl get pods kuard -o=jsonpath="{.spec.containers[0].imagePullPolicy}"
 Mutating admission happens before validating admission, so createconstraints that validate the mutations you expect to apply to the specific resource.
 
 ### Data Replication
+
+Gatekeeper can be configured to cache specific resources into Open Policy Agent to allow comparisons across resources. The resource in [Example](./config-sync.yaml) configures Gatekeeper to cache Namespace and Pod resources.
+
+### Policy Library
+
+The Gatekeeper project has a great [policy library](https://github.com/open-policy-agent/gatekeeper-library). It contains a general library with the most common policies as well as pod-security-policy library that models the capabilities of the PodSecurityPolicy API as Gatekeeper policy.
