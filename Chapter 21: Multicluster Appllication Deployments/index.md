@@ -45,3 +45,9 @@ When you design your application this way, each region is its own silo. All of t
 Especially when taking an existing application from single cluster to multicluster, a replicated silos design is the easiest approach to use, but it is worth understanding that it comes with costs that may be sustainable initially but eventually will require your application to be refactored.
 
 ### Sharding: Regional Data
+
+Sharding your data across regions means that not all data is present in all of the clusters where your application is present and this (obviously) impacts the design of your application. The routing layer is responsible for determining whether the request needs to go to a local or cross-regional data shard.
+
+### Better Flexibility: Microservice Routing
+
+A better approach is to treat each microservice within your application as a public-facing service in terms of its application design. It may never be expected to actually be public facing, but it should have its own global load balancer. 
