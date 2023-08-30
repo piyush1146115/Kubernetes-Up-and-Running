@@ -141,7 +141,5 @@ You can use the top command to see the list of resources in use by either nodes 
 command:
 ```
 $ kubectl top nodes
-
-$ kubectl top nodes
 ```
 These top commands only work if a metrics server is running in your cluster.
