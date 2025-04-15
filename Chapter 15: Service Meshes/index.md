@@ -5,7 +5,7 @@ There are three general capabilities provided by most service mesh implementatio
 - traffic shaping
 - observability
 
-### Encryption and Authentication with Mutal TLS
+### Encryption and Authentication with Mutual TLS
 
 Encryption of network traffic between Pods is a key component to security in a microservice architecture. Encryptions provided by Mutual Transport Layer Security,
 or mTLS, is one of the most popular use cases for a service mesh. By contrast, installing a service mesh on your Kubernetes cluster automatically provides
